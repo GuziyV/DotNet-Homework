@@ -128,6 +128,14 @@ namespace Parking
             return lastMinuteTransactins;
         }
 
+        public IEnumerable<Car> GetAllCars() => Cars;
+
+        public Car GetCarById(int id)
+        {
+            Car car = Cars.First<Car>(c => c.Id == id);
+            return car;
+        }
+
         public void Dispose()
         {
             _takeMoney.Dispose();
