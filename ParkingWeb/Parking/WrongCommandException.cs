@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Parking
 {
-    class WrongCommandException : Exception
+    public class WrongCommandException : Exception
     {
         public WrongCommandException()
         {

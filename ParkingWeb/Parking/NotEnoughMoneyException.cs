@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Parking
 {
-    class NotEnoughMoneyException : Exception
+    public class NotEnoughMoneyException : Exception
     {
         public NotEnoughMoneyException()
         {

@@ -34,7 +34,17 @@ namespace ParkingWeb
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+
+                routes.MapRoute(
+                    name: "default",
+                    template: "api/{controller}/{action}/{id?}");
+
+                routes.MapRoute(
+                    name: "addcar",
+                    template: "api/cars/add_car/{id:int}/{type}/{amount:decimal}");
+            });
         }
     }
 }
