@@ -1,5 +1,7 @@
 # DotNet-Homework
 
+#### File Transaction.log will be created automatically after launching ####
+
 #### Tested in Postman ####
 
 ### Car: ###
