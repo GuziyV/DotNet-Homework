@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Parking
 {
-    class NotEnoughSpaceException : Exception
+    public class NotEnoughSpaceException : Exception
     {
         public NotEnoughSpaceException()
         {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Parking
 {
-    class WrongTypeOfCarException : Exception
+    public class WrongTypeOfCarException : Exception
     {
         public WrongTypeOfCarException()
         {

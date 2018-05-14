@@ -31,15 +31,16 @@ namespace Parking
         private List<Transaction> Transactions;
         public decimal Balance { get; private set; }
 
-        public void AddCar(Car car)
+        public string AddCar(Car car)
         {
             if (Parking.Instance.GetNumberOfCars() >= Settings.ParkingSpace)
             {
-                throw new NotEnoughSpaceException("Not enough space in the parking lot, please wait");
+                return "Not Enough Space";
             }
             else
             {
                 Cars.Add(car);
+                return "Added";
             }
         }
 
@@ -53,25 +54,40 @@ namespace Parking
             Balance += amount;
         }
 
-        public bool AddCarMoney(uint carId, decimal amount)
+        public string AddCarMoney(uint carId, decimal amount)
         {
-            Car car = Cars.First<Car>(c => c.Id == carId);
+            Car car = Cars.FirstOrDefault<Car>(c => c.Id == carId);
             if (car == null)
             {
-                return false;
+                return "cant find a car with such id";
             }
             car.AddMoney(amount);
-            return true;
+            return "Profit";
         }
-        public void DeleteCar(uint carId)
+        public string DeleteCar(uint carId)
         {
-            Car car = Cars.First<Car>(c => c.Id == carId);
-            Cars.Remove(car);
+            Car car = Cars.FirstOrDefault<Car>(c => c.Id == carId);
+            if(car == null)
+            {
+                return "cant find a car with such id"; 
+            }
+            else
+            {
+                Cars.Remove(car);
+                return "removed";
+            }
         }
-        public decimal GetCarBalance(uint id)
+        public string GetCarBalance(uint id)
         {
-            Car car = Cars.First<Car>(c => c.Id == id);
-            return car.Balance;     
+            Car car = Cars.FirstOrDefault<Car>(c => c.Id == id);
+            if (car == null)
+            {
+                return "cant find a car with such id";
+            }
+            else
+            {
+                return "car balance is: " + car.Balance;
+            }
         }
 
         public bool IsIdOfCarExist(uint id)
@@ -90,13 +106,14 @@ namespace Parking
                 var lastMinuteTransactins = Parking.Instance.GetLastMinuteTransactions();
                 using(StreamWriter log = new StreamWriter("Transactions.log", true, System.Text.Encoding.Default))
                 {
-                    log.WriteLine("Date and time: {0}", DateTime.Now);
+                    log.Write("Date and time: {0}", DateTime.Now);
                     decimal sum = 0;
                     foreach (var transaction in lastMinuteTransactins)
                     {
                         sum += transaction.Withdraw;
                     }
-                    log.WriteLine("Sum: {0:0.00}", sum);
+                    log.Write("\tSum: {0:0.00}", sum);
+                    log.WriteLine();
                 }
 
             }
@@ -126,6 +143,14 @@ namespace Parking
         {
             var lastMinuteTransactins = Parking.Instance.Transactions.Where<Transaction>(t => DateTime.Now - t.TransactionTime < new TimeSpan(0, 1, 0));
             return lastMinuteTransactins;
+        }
+
+        public IEnumerable<Car> GetAllCars() => Cars;
+
+        public Car GetCarById(int id)
+        {
+            Car car = Cars.FirstOrDefault<Car>(c => c.Id == id);
+            return car;
         }
 
         public void Dispose()
