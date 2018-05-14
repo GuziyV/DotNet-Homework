@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Parking;
 
 namespace ParkingWeb.Controllers
@@ -18,14 +19,22 @@ namespace ParkingWeb.Controllers
         }
 
         [HttpGet]
-        public Car GetCar(int id)
+        public string GetCar(int id)
         {
-            return Parking.Parking.Instance.GetCarById(id);
+            Car c = Parking.Parking.Instance.GetCarById(id);
+            if (c == null)
+            {
+                return "cant find a car with such id";
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(c);
+            }
         }
         [HttpPost]
-        public string AddCar(int id, decimal amount, string type)
+        public string AddCar(uint id, decimal amount, string type)
         {
-            if (Parking.Parking.Instance.IsIdOfCarExist(UInt32.Parse(id.ToString())))
+            if (Parking.Parking.Instance.IsIdOfCarExist(id))
             {
                 return "Id is already exists";
             }
@@ -48,15 +57,13 @@ namespace ParkingWeb.Controllers
                 default:
                     return "Wrong type of car";
             }
-            Parking.Parking.Instance.AddCar(new Car(UInt32.Parse(id.ToString()), cType, amount));
-            return "Car added!";
+            return Parking.Parking.Instance.AddCar(new Car(id, cType, amount));
         }
-  
+
         [HttpDelete]
         public string DeleteCar(uint id)
         {
-            Parking.Parking.Instance.DeleteCar(id);
-            return "removed";
+            return Parking.Parking.Instance.DeleteCar(id);
         }
     }
 }

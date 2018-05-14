@@ -37,7 +37,7 @@ namespace ParkingWeb.Controllers
             return lastMinuteTransactins;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         public IEnumerable<Transaction> GetLastMinuteTransactionsById(uint id)
         {
             IEnumerable<Transaction> lastMinuteTransactins = Parking.Parking.Instance.GetLastMinuteTransactions()
@@ -48,8 +48,7 @@ namespace ParkingWeb.Controllers
         [HttpPut]
         public string AddCarMoney(uint id, decimal value)
         {
-            Parking.Parking.Instance.AddCarMoney(id, value);
-            return "Added!";
+            return Parking.Parking.Instance.AddCarMoney(id, value);
         }
         
     }
