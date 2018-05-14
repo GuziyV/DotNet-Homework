@@ -1,46 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Json;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Parking;
 
 namespace ParkingWeb.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Transactions")]
     public class TransactionsController : Controller
     {
-        // GET: api/Transactions
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<string> GetTransactionLog()
         {
-            return new string[] { "value1", "value2" };
+            List<string> JsonLogs = new List<string>();
+            string line;
+            using (StreamReader sr = new StreamReader("Transactions.log", System.Text.Encoding.Default))
+            {
+                line = sr.ReadLine();
+                while (line != null)
+                {
+                    JsonLogs.Add(Services.JsonLogParser.Parse(line));
+                    line = sr.ReadLine();
+                }
+            }
+            return JsonLogs;
+
+        }
+        [HttpGet]
+        public IEnumerable<Transaction> GetLastMinuteTransactions()
+        {
+            IEnumerable<Transaction> lastMinuteTransactins = Parking.Parking.Instance.GetLastMinuteTransactions();
+            return lastMinuteTransactins;
         }
 
-        // GET: api/Transactions/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        [HttpGet]
+        public IEnumerable<Transaction> GetLastMinuteTransactionsById(uint id)
         {
-            return "value";
+            IEnumerable<Transaction> lastMinuteTransactins = Parking.Parking.Instance.GetLastMinuteTransactions()
+                .Where<Transaction>(t => t.CarId == id);
+            return lastMinuteTransactins;
+        }
+
+        [HttpPut]
+        public string AddCarMoney(uint id, decimal value)
+        {
+            return Parking.Parking.Instance.AddCarMoney(id, value);
         }
         
-        // POST: api/Transactions
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-        
-        // PUT: api/Transactions/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-        
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

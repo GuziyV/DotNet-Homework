@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Parking
 {
-    static class Settings
+    public static class Settings
     {
         static Settings()
         {
@@ -31,6 +31,6 @@ namespace Parking
             { CarType.Bus, 20}
         };
 
-        static public readonly uint ParkingSpace;
+        static public readonly int ParkingSpace;
     }
 }

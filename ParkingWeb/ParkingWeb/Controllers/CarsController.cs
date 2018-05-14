@@ -4,44 +4,66 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Parking;
 
 namespace ParkingWeb.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Car")]
     public class CarsController : Controller
     {
-        // GET: api/Cars
         [HttpGet]
-        public IEnumerable<Car> Get()
+        public IEnumerable<Car> GetAllCars()
         {
             return Parking.Parking.Instance.GetAllCars();
         }
 
-        // GET: api/Cars/5
-        [HttpGet("{id}", Name = "Get")]
-        public Car Get(int id)
+        [HttpGet]
+        public string GetCar(int id)
         {
-            return Parking.Parking.Instance.GetCarById(id);
+            Car c = Parking.Parking.Instance.GetCarById(id);
+            if (c == null)
+            {
+                return "cant find a car with such id";
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(c);
+            }
         }
-        
-        // POST: api/Car
         [HttpPost]
-        public void Post([FromBody]string value)
+        public string AddCar(uint id, decimal amount, string type)
         {
+            if (Parking.Parking.Instance.IsIdOfCarExist(id))
+            {
+                return "Id is already exists";
+            }
+            CarType cType;
+
+            switch (type.ToLower())
+            {
+                case "passenger":
+                    cType = CarType.Passenger;
+                    break;
+                case "truck":
+                    cType = CarType.Truck;
+                    break;
+                case "bus":
+                    cType = CarType.Bus;
+                    break;
+                case "motorcycle":
+                    cType = CarType.Motorcycle;
+                    break;
+                default:
+                    return "Wrong type of car";
+            }
+            return Parking.Parking.Instance.AddCar(new Car(id, cType, amount));
         }
-        
-        // PUT: api/Cars/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+
+        [HttpDelete]
+        public string DeleteCar(uint id)
         {
-        }
-        
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return Parking.Parking.Instance.DeleteCar(id);
         }
     }
 }
