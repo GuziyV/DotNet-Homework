@@ -27,5 +27,5 @@ http://localhost:19304/Transactions/GetLastMinuteTransactionsById/{id} - *show l
 
 http://localhost:19304/Transactions/addcarmoney/ *(id, value)**
 
-* ** keys in a postman **
+"*" **means keys in a postman**
 
