@@ -90,13 +90,13 @@ namespace Parking
                 var lastMinuteTransactins = Parking.Instance.GetLastMinuteTransactions();
                 using(StreamWriter log = new StreamWriter("Transactions.log", true, System.Text.Encoding.Default))
                 {
-                    log.WriteLine("Date and time: {0}", DateTime.Now);
+                    log.Write("Date and time: {0}", DateTime.Now);
                     decimal sum = 0;
                     foreach (var transaction in lastMinuteTransactins)
                     {
                         sum += transaction.Withdraw;
                     }
-                    log.WriteLine("Sum: {0:0.00}", sum);
+                    log.Write("\tSum: {0:0.00}", sum);
                 }
 
             }

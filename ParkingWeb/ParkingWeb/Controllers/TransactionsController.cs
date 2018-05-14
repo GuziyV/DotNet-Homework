@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Json;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -10,21 +11,25 @@ using Parking;
 namespace ParkingWeb.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Transactions")]
     public class TransactionsController : Controller
     {
-        [Route("get_transaction_log")]
         [HttpGet]
-        public string GetTransactionLog()
+        public IEnumerable<string> GetTransactionLog()
         {
+            List<string> JsonLogs = new List<string>();
             string line;
             using (StreamReader sr = new StreamReader("Transactions.log", System.Text.Encoding.Default))
             {
-                line = sr.ReadToEnd();
+                line = sr.ReadLine();
+                while (line != null)
+                {
+                    JsonLogs.Add(Services.JsonLogParser.Parse(line));
+                    line = sr.ReadLine();
+                }
             }
-            return line;
+            return JsonLogs;
+
         }
-        [Route("get_last_minute_transactions")]
         [HttpGet]
         public IEnumerable<Transaction> GetLastMinuteTransactions()
         {
@@ -32,8 +37,7 @@ namespace ParkingWeb.Controllers
             return lastMinuteTransactins;
         }
 
-        [Route("get_last_minute_transactions/{id}")]
-        [HttpGet]
+        [HttpGet("{id}")]
         public IEnumerable<Transaction> GetLastMinuteTransactionsById(uint id)
         {
             IEnumerable<Transaction> lastMinuteTransactins = Parking.Parking.Instance.GetLastMinuteTransactions()
@@ -41,12 +45,11 @@ namespace ParkingWeb.Controllers
             return lastMinuteTransactins;
         }
 
-        [Route("give_car_money/{id}/{value}")]
         [HttpPut]
-        public string Put(uint id, decimal value)
+        public string AddCarMoney(uint id, decimal value)
         {
             Parking.Parking.Instance.AddCarMoney(id, value);
-            return "putted!";
+            return "Added!";
         }
         
     }

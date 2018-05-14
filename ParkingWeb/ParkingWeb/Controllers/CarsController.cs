@@ -9,29 +9,25 @@ using Parking;
 namespace ParkingWeb.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Cars")]
     public class CarsController : Controller
     {
         [HttpGet]
-        public IEnumerable<Car> Get()
+        public IEnumerable<Car> GetAllCars()
         {
             return Parking.Parking.Instance.GetAllCars();
         }
 
-        [Route("get_car/{id}")]
         [HttpGet]
-        public Car Get(int id)
+        public Car GetCar(int id)
         {
             return Parking.Parking.Instance.GetCarById(id);
         }
-        
         [HttpPost]
-        [Route("add_car/{id:int}/{type}/{amount:decimal}")]
-        public string Post(int id, string type, int amount)
+        public string AddCar(int id, decimal amount, string type)
         {
             if (Parking.Parking.Instance.IsIdOfCarExist(UInt32.Parse(id.ToString())))
             {
-                throw new WrongCommandException("Id is already exists");
+                return "Id is already exists";
             }
             CarType cType;
 
@@ -50,17 +46,17 @@ namespace ParkingWeb.Controllers
                     cType = CarType.Motorcycle;
                     break;
                 default:
-                    throw new WrongTypeOfCarException("Wrong type of car");
+                    return "Wrong type of car";
             }
             Parking.Parking.Instance.AddCar(new Car(UInt32.Parse(id.ToString()), cType, amount));
             return "Car added!";
         }
   
         [HttpDelete]
-        [Route("delete/{id}")]
-        public void Delete(uint id)
+        public string DeleteCar(uint id)
         {
             Parking.Parking.Instance.DeleteCar(id);
+            return "removed";
         }
     }
 }
