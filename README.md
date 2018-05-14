@@ -3,7 +3,6 @@
 ### Car: ###
 
 http://localhost:xxxxx/cars/getallars - *show all cars*
-
 http://localhost:19304cars/addcar (id, amount, key)* -  *add new car on the parking lot*
 
 http://localhost:19304/cars/deletecar (id)* - *delete car by id*
